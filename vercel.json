@@ -3,26 +3,6 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "env": {
-    "DATABASE_URL": {
-      "description": "Database connection string"
-    },
-    "NEXTAUTH_SECRET": {
-      "description": "Secret key for NextAuth - generate with: openssl rand -base64 32"
-    },
-    "NEXTAUTH_URL": {
-      "description": "URL of your application"
-    },
-    "JWT_SECRET": {
-      "description": "JWT secret key - generate randomly"
-    }
-  },
-  "git": {
-    "deploymentEnabled": {
-      "main": true,
-      "develop": false
-    }
-  },
   "redirects": [
     {
       "source": "/",
