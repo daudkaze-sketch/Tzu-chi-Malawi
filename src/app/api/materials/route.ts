@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         purposeOfUse,
         storageLocation,
         remarks,
-        userId: decoded.userId,
+        userId: session.user.id,
       },
     });
 

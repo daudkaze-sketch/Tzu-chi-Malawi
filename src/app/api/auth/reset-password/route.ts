@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     if (!parseResult.success) {
       return NextResponse.json(
-        { error: parseResult.error.errors[0]?.message || 'Invalid request data' },
+        { error: parseResult.error.issues[0]?.message || 'Invalid request data' },
         { status: 400 }
       );
     }
