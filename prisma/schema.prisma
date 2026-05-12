@@ -1,0 +1,394 @@
+// Tzu Chi Malawi Office Database Schema
+// This schema defines all data models for the office digitalization system
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  department    String?
+  role          String    @default("STAFF")
+  status        String    @default("active")
+  provider      String    @default("local") // 'local', 'google', etc.
+  providerId    String?   @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  accounts      Account[]
+  sessions      Session[]
+
+  dailyReports      DailyReport[]
+  attendances       Attendance[]
+  tasks             Task[]
+  materials         Material[]
+  teachingActivities TeachingActivity[]
+  preSchoolMonitorings PreSchoolMonitoring[]
+  scholarshipStudents ScholarshipStudent[]
+  officeTrainings   OfficeTraining[]
+  projects          AgriculturalProject[]
+  homeVisits        HomeVisit[]
+  reliefDistributions ReliefDistribution[]
+  charityActivities  CharityActivity[]
+  mediaUploads      Media[]
+  announcements     Announcement[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String  @unique
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model DailyReport {
+  id        String     @id @default(cuid())
+  date      DateTime
+  department String
+  workDone  String
+  involved  String
+  location  String
+  challenges String?
+  solutions String?
+  status    String     @default("in-progress")
+  images    String?   // JSON array of {url: string, caption?: string}
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
+}
+
+model Attendance {
+  id        String     @id @default(cuid())
+  name      String
+  department String
+  checkInTime DateTime
+  checkOutTime DateTime?
+  status    String
+  remarks   String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Task {
+  id        String     @id @default(cuid())
+  title     String
+  assignedTo String
+  department String
+  startDate DateTime
+  endDate   DateTime
+  priority  String
+  notes     String?
+  status    String     @default("pending")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId, status])
+}
+
+model Material {
+  id              String     @id @default(cuid())
+  itemName        String
+  category        String     // Food or Non-Food
+  quantityReceived Int       @default(0)
+  quantityUsed     Int       @default(0)
+  quantityRemaining Int      @default(0) // Auto-calculated
+  stockStatus      String    @default("In Stock") // In Stock, Low Stock, Out of Stock
+  dateReceived     DateTime
+  receivedFrom     String?
+  issuedTo         String?
+  purposeOfUse     String?
+  storageLocation  String?
+  remarks          String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  userId           String
+  user             User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model TeachingActivity {
+  id        String     @id @default(cuid())
+  type      String     // Dharma, Jing Si Aphorism, Training
+  location  String     // Office, School, Home Visit
+  participants Int
+  ageGroup  String?
+  topicsCovered String
+  duration  String?
+  materialsUsed String?
+  understandingLevel String? // Good, Average, Poor
+  feedback  String?
+  challenges String?
+  followUpPlan String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model PreSchoolMonitoring {
+  id        String     @id @default(cuid())
+  schoolName String
+  location  String
+  numberOfChildren Int
+  numberOfTeachers Int
+  attendanceRate String
+  cleanlinessLevel String // Good, Average, Poor
+  teachingQuality String
+  learningMaterialsAvailability String
+  nutritionStatus String
+  challenges String?
+  supportNeeded String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model ScholarshipStudent {
+  id        String     @id @default(cuid())
+  studentName String
+  school    String
+  grade     String
+  academicPerformance String
+  attendance String
+  behavior  String
+  financialSupport String
+  guardianDetails String
+  progressReports String?
+  challenges String?
+  recommendations String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model OfficeTraining {
+  id        String     @id @default(cuid())
+  trainingTitle String
+  trainerName String
+  date      DateTime
+  duration  String
+  participants String
+  objectives String
+  topicsCovered String
+  skillsGained String?
+  evaluation String?
+  feedback  String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model AgriculturalProject {
+  id        String     @id @default(cuid())
+  typeOfProject String // Crop, Livestock
+  landSize  String?
+  inputsProvided String?
+  farmingMethods String?
+  expectedYield String?
+  actualYield String?
+  weatherChallenges String?
+  projectStatus String @default("not-started")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+  beneficiaries Beneficiary[]
+
+  @@index([userId])
+}
+
+model Beneficiary {
+  id        String     @id @default(cuid())
+  name      String
+  location  String?
+  contact   String?
+  typeOfSupport String
+  projectId String
+  project   AgriculturalProject @relation(fields: [projectId], references: [id])
+  progressStatus String?
+  notes     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([projectId])
+}
+
+model HomeVisit {
+  id        String     @id @default(cuid())
+  beneficiaryName String
+  familySize Int?
+  livingConditions String?
+  mainChallenges String?
+  healthCondition String?
+  incomeSource String?
+  immediateNeeds String?
+  longTermNeeds String?
+  recommendations String?
+  followUpDate DateTime?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model ReliefDistribution {
+  id        String     @id @default(cuid())
+  beneficiaryName String
+  beneficiaryId String?
+  itemsReceived String
+  quantity Int
+  signature String?
+  location  String
+  villageName String
+  district  String
+  date      DateTime
+  distributionType String
+  purpose   String
+  followUpNeeded Boolean @default(false)
+  notes     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Survey {
+  id        String     @id @default(cuid())
+  areaAffected String
+  typeOfDisaster String
+  numberOfHouseholdsAffected Int
+  numberOfInjured Int?
+  urgentNeeds String?
+  accessibilityOfArea String?
+  photos    String?
+  recommendedAction String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CharityActivity {
+  id        String     @id @default(cuid())
+  activityType String // Community cleaning, Health support, Emergency response
+  description String
+  participants String?
+  location  String?
+  date      DateTime
+  impact    String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Media {
+  id        String     @id @default(cuid())
+  title     String
+  type      String     // Photo, Video, Report
+  department String
+  eventName String?
+  photographer String?
+  location  String?
+  date      DateTime
+  description String?
+  approvalStatus String @default("Pending") // Approved, Pending
+  filePath  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId, department])
+}
+
+model Announcement {
+  id          String     @id @default(cuid())
+  title       String
+  type        String     // General Announcement, Weekly Schedule, Emergency Message
+  messageContent String
+  date        DateTime
+  priorityLevel String   // High, Medium, Low
+  attachments String?    // JSON array of file URLs
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
+}
+
+model Village {
+  id        String     @id @default(cuid())
+  name      String
+  district  String
+  activeVolunteers Int @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([district])
+}
