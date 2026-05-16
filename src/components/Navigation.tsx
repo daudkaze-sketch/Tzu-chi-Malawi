@@ -2,20 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
-import { Menu, X, LogOut, Home, FileText, Users, Calendar, Box, Megaphone } from 'lucide-react';
-import { useSession, signOut } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
+import { Menu, X, Home, FileText, Users, Calendar, Box, Megaphone } from 'lucide-react';
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
   const pathname = usePathname();
-  const { data: session } = useSession();
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    signOut({ callbackUrl: '/login' });
-  };
 
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -56,18 +48,7 @@ export function Navigation() {
           </div>
 
           <div className="flex items-center space-x-4">
-            {session?.user && (
-              <span className="text-sm hidden sm:block">
-                {session.user.name || session.user.username || session.user.email}
-              </span>
-            )}
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-1 bg-red-600 hover:bg-red-700 px-3 py-2 rounded-md text-sm"
-            >
-              <LogOut size={18} />
-              <span className="hidden sm:block">Logout</span>
-            </button>
+            <span className="text-sm hidden sm:block">Tzu Chi Malawi</span>
           </div>
 
           {/* Mobile menu button */}
