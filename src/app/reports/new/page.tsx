@@ -70,13 +70,7 @@ export default function NewReportPage() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        router.push('/login');
-        return;
-      }
 
-      const formDataToSend = new FormData();
 
       // Add form fields
       Object.entries(formData).forEach(([key, value]) => {
@@ -93,9 +87,7 @@ export default function NewReportPage() {
 
       const response = await fetch('/api/reports', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        
         body: formDataToSend,
       });
 

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 
@@ -10,13 +9,6 @@ export async function DELETE(
 ) {
   const params = await context.params;
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-    const userId = decoded.userId;
 
     const distribution = await prisma.reliefDistribution.findUnique({
       where: { id: params.id },
@@ -47,13 +39,6 @@ export async function PATCH(
 ) {
   const params = await context.params;
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-    const userId = decoded.userId;
 
     const distribution = await prisma.reliefDistribution.findUnique({
       where: { id: params.id },

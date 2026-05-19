@@ -1,20 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth-options';
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const attendances = await prisma.attendance.findMany({
-      where: { userId: session.user.id },
-      orderBy: { createdAt: 'desc' },
+            orderBy: { createdAt: 'desc' },
     });
 
     return NextResponse.json({ attendances });
@@ -26,10 +19,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const body = await request.json();
     const { name, department, checkInTime, checkOutTime, status, remarks } = body;
@@ -42,8 +31,7 @@ export async function POST(request: NextRequest) {
         checkOutTime: checkOutTime ? new Date(checkOutTime) : null,
         status,
         remarks,
-        userId: session.user.id,
-      },
+              },
     });
 
     return NextResponse.json(

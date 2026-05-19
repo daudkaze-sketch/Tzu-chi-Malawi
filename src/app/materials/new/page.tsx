@@ -34,20 +34,11 @@ export default function NewMaterialPage() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        router.push('/login');
-        return;
-      }
 
-      const quantityRemaining = parseInt(formData.quantityReceived) - parseInt(formData.quantityUsed || '0');
 
       const response = await fetch('/api/materials', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
           quantityReceived: parseInt(formData.quantityReceived),

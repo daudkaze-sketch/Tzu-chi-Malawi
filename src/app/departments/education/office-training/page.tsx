@@ -30,9 +30,9 @@ export default function OfficeTrainingPage() {
 
   const fetchTrainings = async () => {
     try {
-      const token = localStorage.getItem('token');
+      
       const response = await fetch('/api/office-training', {
-        headers: { Authorization: `Bearer ${token}` },
+        
       });
       const data = await response.json();
       setTrainings(data.trainings || []);
@@ -110,12 +110,11 @@ function OfficeTrainingForm({ onClose, onSubmit }: { onClose: () => void; onSubm
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      
       const response = await fetch('/api/office-training', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });

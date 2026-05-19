@@ -35,7 +35,7 @@ export default function AnnouncementsPage() {
     }
   };
 
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  
 
   if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
 
@@ -43,15 +43,13 @@ export default function AnnouncementsPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">Latest News & Updates</h1>
-        {token && (
-          <Link
-            href="/announcements/new"
-            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
-          >
-            <Plus size={20} />
-            <span>Post News</span>
-          </Link>
-        )}
+        <Link
+          href="/announcements/new"
+          className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
+        >
+          <Plus size={20} />
+          <span>Post News</span>
+        </Link>
       </div>
 
       {announcements.length === 0 ? (

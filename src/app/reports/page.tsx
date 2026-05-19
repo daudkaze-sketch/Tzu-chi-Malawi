@@ -25,20 +25,12 @@ export default function ReportsListPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    fetchReports(token);
+    fetchReports();
   }, [router]);
 
-  const fetchReports = async (token: string) => {
+  const fetchReports = async () => {
     try {
-      const res = await fetch('/api/reports', {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
+      const res = await fetch('/api/reports');
       const data = await res.json();
       setReports(data.reports || []);
     } catch (err) {

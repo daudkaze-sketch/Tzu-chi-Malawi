@@ -83,11 +83,11 @@ export default function SurveyPage() {
 
   const fetchSurveys = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch('/api/surveys', {
-        headers: { 'Authorization': `Bearer ${token}` },
+        
       });
       const data = await response.json();
       setSurveys(data.surveys || []);
@@ -102,8 +102,8 @@ export default function SurveyPage() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       // Use FormData to support file uploads
       const formDataToSend = new FormData();
@@ -146,9 +146,7 @@ export default function SurveyPage() {
 
       const response = await fetch(url, {
         method,
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        
         body: formDataToSend,
       });
 
@@ -206,12 +204,12 @@ export default function SurveyPage() {
     if (!confirm('Are you sure you want to delete this survey?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch(`/api/surveys/${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` },
+        
       });
 
       if (response.ok) {

@@ -31,9 +31,9 @@ export default function ScholarshipStudentsPage() {
 
   const fetchStudents = async () => {
     try {
-      const token = localStorage.getItem('token');
+      
       const response = await fetch('/api/scholarship-students', {
-        headers: { Authorization: `Bearer ${token}` },
+        
       });
       const data = await response.json();
       setStudents(data.students || []);
@@ -112,12 +112,11 @@ function ScholarshipStudentForm({ onClose, onSubmit }: { onClose: () => void; on
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      
       const response = await fetch('/api/scholarship-students', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });

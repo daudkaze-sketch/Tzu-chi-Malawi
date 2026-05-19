@@ -58,11 +58,11 @@ export default function BeneficiaryManagementPage() {
 
   const fetchBeneficiaries = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch('/api/beneficiary-management', {
-        headers: { 'Authorization': `Bearer ${token}` },
+        
       });
       const data = await response.json();
       setBeneficiaries(data.beneficiaries || []);
@@ -99,15 +99,12 @@ export default function BeneficiaryManagementPage() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch('/api/beneficiary-management', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.name,
           identifier: formData.identifier,
@@ -169,16 +166,13 @@ export default function BeneficiaryManagementPage() {
         return;
       }
 
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       // Bulk import API call
       const response = await fetch('/api/beneficiary-management/bulk-import', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ records }),
       });
 

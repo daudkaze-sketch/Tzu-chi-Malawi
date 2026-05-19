@@ -27,20 +27,12 @@ export default function MaterialsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    fetchMaterials(token);
+    fetchMaterials();
   }, [router]);
 
-  const fetchMaterials = async (token: string) => {
+  const fetchMaterials = async () => {
     try {
-      const res = await fetch('/api/materials', {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
+      const res = await fetch('/api/materials');
       const data = await res.json();
       setMaterials(data.materials || []);
     } catch (err) {

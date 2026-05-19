@@ -26,10 +26,6 @@ model User {
   providerId    String?   @unique
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  
-  accounts      Account[]
-  sessions      Session[]
-
   dailyReports      DailyReport[]
   attendances       Attendance[]
   tasks             Task[]
@@ -46,41 +42,6 @@ model User {
   announcements     Announcement[]
 }
 
-model Account {
-  id                 String  @id @default(cuid())
-  userId             String  @unique
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
 model DailyReport {
   id        String     @id @default(cuid())
   date      DateTime
@@ -94,8 +55,8 @@ model DailyReport {
   images    String?   // JSON array of {url: string, caption?: string}
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
 
   @@index([userId, date])
 }
@@ -110,8 +71,8 @@ model Attendance {
   remarks   String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -128,8 +89,8 @@ model Task {
   status    String     @default("pending")
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
 
   @@index([userId, status])
 }
@@ -150,8 +111,8 @@ model Material {
   remarks          String?
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
-  userId           String
-  user             User       @relation(fields: [userId], references: [id])
+  userId           String?
+  user             User?       @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -171,8 +132,8 @@ model TeachingActivity {
   followUpPlan String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -192,8 +153,8 @@ model PreSchoolMonitoring {
   supportNeeded String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -213,8 +174,8 @@ model ScholarshipStudent {
   recommendations String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -233,8 +194,8 @@ model OfficeTraining {
   feedback  String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -251,8 +212,8 @@ model AgriculturalProject {
   projectStatus String @default("not-started")
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
   beneficiaries Beneficiary[]
 
   @@index([userId])
@@ -288,8 +249,8 @@ model HomeVisit {
   followUpDate DateTime?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -311,8 +272,8 @@ model ReliefDistribution {
   notes     String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -341,8 +302,8 @@ model CharityActivity {
   impact    String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -361,8 +322,8 @@ model Media {
   filePath  String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
 
   @@index([userId, department])
 }
@@ -377,8 +338,8 @@ model Announcement {
   attachments String?    // JSON array of file URLs
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  userId      String
-  user        User       @relation(fields: [userId], references: [id])
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id])
 
   @@index([userId, date])
 }

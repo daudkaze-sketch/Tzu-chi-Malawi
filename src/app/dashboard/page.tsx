@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { BarChart3, Users, FileText, CheckCircle, AlertCircle, Plus } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+
 import VillagesManagement from '@/components/VillagesManagement';
 
 interface Stats {
@@ -22,19 +21,10 @@ export default function DashboardPage() {
     lowStockItems: 0,
   });
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (status === 'loading') return;
-
-    if (!session) {
-      router.push('/login');
-      return;
-    }
-
     fetchStats();
-  }, [session, status, router]);
+  }, []);
 
   const fetchStats = async () => {
     try {
@@ -84,7 +74,7 @@ export default function DashboardPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-800">
-          Welcome, {session?.user?.name}!
+          Welcome to Tzu Chi Malawi
         </h1>
         <p className="text-gray-600 mt-2">
           {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}

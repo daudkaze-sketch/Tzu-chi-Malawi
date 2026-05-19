@@ -44,11 +44,11 @@ export default function HomeVisitsPage() {
 
   const fetchVisits = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch('/api/home-visits', {
-        headers: { 'Authorization': `Bearer ${token}` },
+        
       });
       const data = await response.json();
       setVisits(data.visits || []);
@@ -63,15 +63,12 @@ export default function HomeVisitsPage() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch('/api/home-visits', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           beneficiaryName: formData.beneficiaryName,
           familySize: parseInt(formData.familySize) || null,

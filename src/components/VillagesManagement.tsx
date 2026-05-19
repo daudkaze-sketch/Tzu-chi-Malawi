@@ -34,11 +34,11 @@ export default function VillagesManagementCard() {
 
   const fetchVillages = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch('/api/villages', {
-        headers: { 'Authorization': `Bearer ${token}` },
+        
       });
       const data = await response.json();
       setVillages(data.villages || []);
@@ -53,15 +53,12 @@ export default function VillagesManagementCard() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch('/api/villages', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.name,
           district: formData.district,
@@ -84,15 +81,12 @@ export default function VillagesManagementCard() {
     if (!editingId) return;
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch(`/api/villages/${editingId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.name,
           district: formData.district,
@@ -114,12 +108,12 @@ export default function VillagesManagementCard() {
     if (!confirm('Are you sure you want to delete this village?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch(`/api/villages/${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` },
+        
       });
 
       if (response.ok) {

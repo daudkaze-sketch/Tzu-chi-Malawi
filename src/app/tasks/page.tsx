@@ -23,20 +23,12 @@ export default function TasksPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    fetchTasks(token);
+    fetchTasks();
   }, [router]);
 
-  const fetchTasks = async (token: string) => {
+  const fetchTasks = async () => {
     try {
-      const res = await fetch('/api/tasks', {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
+      const res = await fetch('/api/tasks');
       const data = await res.json();
       setTasks(data.tasks || []);
     } catch (err) {

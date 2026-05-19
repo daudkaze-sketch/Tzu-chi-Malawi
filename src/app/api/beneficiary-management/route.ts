@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-    const userId = decoded.userId;
 
     const beneficiaries = await prisma.beneficiary.findMany({
       orderBy: { createdAt: 'desc' },
@@ -47,13 +39,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-    const userId = decoded.userId;
 
     const body = await request.json();
     const {
@@ -102,7 +87,6 @@ export async function POST(request: NextRequest) {
       supportProvided,
       targetSupport,
       createdAt: beneficiary.createdAt,
-      userId,
     };
 
     return NextResponse.json({ beneficiary: responseData }, { status: 201 });

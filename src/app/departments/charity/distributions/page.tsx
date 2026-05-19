@@ -50,11 +50,11 @@ export default function DistributionsPage() {
 
   const fetchDistributions = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch('/api/relief-distributions', {
-        headers: { 'Authorization': `Bearer ${token}` },
+        
       });
       const data = await response.json();
       setDistributions(data.distributions || []);
@@ -69,8 +69,8 @@ export default function DistributionsPage() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const url = editingId 
         ? `/api/relief-distributions/${editingId}` 
@@ -79,10 +79,7 @@ export default function DistributionsPage() {
 
       const response = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           beneficiaryName: formData.beneficiaryName,
           beneficiaryId: formData.beneficiaryId || null,
@@ -132,12 +129,12 @@ export default function DistributionsPage() {
     if (!confirm('Are you sure you want to delete this distribution record?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch(`/api/relief-distributions/${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` },
+        
       });
 
       if (response.ok) {

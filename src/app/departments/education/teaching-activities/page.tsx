@@ -31,9 +31,9 @@ export default function TeachingActivitiesPage() {
 
   const fetchActivities = async () => {
     try {
-      const token = localStorage.getItem('token');
+      
       const response = await fetch('/api/teaching-activities', {
-        headers: { Authorization: `Bearer ${token}` },
+        
       });
       const data = await response.json();
       setActivities(data.activities || []);
@@ -113,12 +113,11 @@ function TeachingActivityForm({ onClose, onSubmit }: { onClose: () => void; onSu
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      
       const response = await fetch('/api/teaching-activities', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           ...formData,

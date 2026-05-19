@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth-options';
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const materials = await prisma.material.findMany({
       orderBy: { createdAt: 'desc' },
@@ -25,10 +19,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const body = await request.json();
     const { itemName, category, quantityReceived, quantityUsed, stockStatus, dateReceived, receivedFrom, issuedTo, purposeOfUse, storageLocation, remarks } = body;
@@ -49,8 +39,7 @@ export async function POST(request: NextRequest) {
         purposeOfUse,
         storageLocation,
         remarks,
-        userId: session.user.id,
-      },
+              },
     });
 
     return NextResponse.json(

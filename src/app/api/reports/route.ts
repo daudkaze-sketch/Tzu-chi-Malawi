@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-options';
 import { saveMultipleFilesWithDateStructure } from '@/lib/fileUtils';
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const reports = await prisma.dailyReport.findMany({
-      where: { userId: session.user.id },
-      orderBy: { createdAt: 'desc' },
+            orderBy: { createdAt: 'desc' },
     });
 
     return NextResponse.json({ reports });
@@ -27,10 +20,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const formData = await request.formData();
     const date = formData.get('date') as string;
@@ -82,8 +71,7 @@ export async function POST(request: NextRequest) {
         solutions,
         status,
         images: imageData.length > 0 ? JSON.stringify(imageData) : null,
-        userId: session.user.id,
-      },
+              },
     });
 
     return NextResponse.json(

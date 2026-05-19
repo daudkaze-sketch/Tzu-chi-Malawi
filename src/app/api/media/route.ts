@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { verifyToken } from '@/lib/auth';
 import { saveFileWithDateStructure } from '@/lib/fileUtils';
 
 const prisma = new PrismaClient();
-
-function getToken(request: NextRequest): string | null {
-  const authHeader = request.headers.get('Authorization');
-  return authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,12 +20,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const token = getToken(request);
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const decoded = verifyToken(token);
-    if (!decoded) return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-
     const formData = await request.formData();
     const title = formData.get('title') as string;
     const type = formData.get('type') as string;
@@ -77,8 +65,7 @@ export async function POST(request: NextRequest) {
         description,
         photographer,
         filePath,
-        userId: decoded.userId,
-      },
+              },
     });
 
     return NextResponse.json(

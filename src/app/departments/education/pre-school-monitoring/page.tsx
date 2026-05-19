@@ -31,9 +31,9 @@ export default function PreSchoolMonitoringPage() {
 
   const fetchMonitorings = async () => {
     try {
-      const token = localStorage.getItem('token');
+      
       const response = await fetch('/api/pre-school-monitoring', {
-        headers: { Authorization: `Bearer ${token}` },
+        
       });
       const data = await response.json();
       setMonitorings(data.monitorings || []);
@@ -113,12 +113,11 @@ function PreSchoolMonitoringForm({ onClose, onSubmit }: { onClose: () => void; o
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      
       const response = await fetch('/api/pre-school-monitoring', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           ...formData,

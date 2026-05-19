@@ -22,20 +22,12 @@ export default function AttendancePage() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    fetchAttendances(token);
+    fetchAttendances();
   }, [router]);
 
-  const fetchAttendances = async (token: string) => {
+  const fetchAttendances = async () => {
     try {
-      const res = await fetch('/api/attendance', {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
+      const res = await fetch('/api/attendance');
       const data = await res.json();
       setAttendances(data.attendances || []);
     } catch (err) {
@@ -50,16 +42,16 @@ export default function AttendancePage() {
     if (!confirm('Are you sure you want to delete this attendance record?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch(`/api/attendance/${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` },
+        
       });
 
       if (response.ok) {
-        fetchAttendances(token);
+        fetchAttendances();
       } else {
         alert('Failed to delete attendance record');
       }

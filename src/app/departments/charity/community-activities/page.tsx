@@ -57,11 +57,11 @@ export default function CommunityActivitiesPage() {
 
   const fetchActivities = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch('/api/community-activities', {
-        headers: { 'Authorization': `Bearer ${token}` },
+        
       });
       const data = await response.json();
       setActivities(data.activities || []);
@@ -76,15 +76,12 @@ export default function CommunityActivitiesPage() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      
+      
 
       const response = await fetch('/api/community-activities', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           activityTitle: formData.activityTitle,
           activityType: formData.activityType,
