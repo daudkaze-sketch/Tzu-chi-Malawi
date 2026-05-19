@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { saveMultipleFilesWithDateStructure } from '@/lib/fileUtils';
 
 const prisma = new PrismaClient();
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {    const formData = await request.formData();

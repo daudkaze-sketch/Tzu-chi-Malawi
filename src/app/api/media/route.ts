@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { saveFileWithDateStructure } from '@/lib/fileUtils';
 
 const prisma = new PrismaClient();
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
