@@ -5,9 +5,7 @@ const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-
     const distributions = await prisma.reliefDistribution.findMany({
-      where: { userId },
       orderBy: { createdAt: 'desc' },
     });
 

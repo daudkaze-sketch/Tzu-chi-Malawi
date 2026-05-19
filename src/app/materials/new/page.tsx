@@ -34,15 +34,17 @@ export default function NewMaterialPage() {
     setLoading(true);
 
     try {
-
+      const quantityReceived = parseInt(formData.quantityReceived);
+      const quantityUsed = parseInt(formData.quantityUsed || '0');
+      const quantityRemaining = quantityReceived - quantityUsed;
 
       const response = await fetch('/api/materials', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          quantityReceived: parseInt(formData.quantityReceived),
-          quantityUsed: parseInt(formData.quantityUsed || '0'),
+          quantityReceived,
+          quantityUsed,
           quantityRemaining,
         }),
       });

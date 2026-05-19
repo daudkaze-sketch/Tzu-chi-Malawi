@@ -18,10 +18,6 @@ export async function DELETE(
       return NextResponse.json({ error: 'Distribution not found' }, { status: 404 });
     }
 
-    if (distribution.userId !== userId) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
     await prisma.reliefDistribution.delete({
       where: { id: params.id },
     });
@@ -46,10 +42,6 @@ export async function PATCH(
 
     if (!distribution) {
       return NextResponse.json({ error: 'Distribution not found' }, { status: 404 });
-    }
-
-    if (distribution.userId !== userId) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await request.json();

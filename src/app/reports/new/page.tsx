@@ -70,11 +70,11 @@ export default function NewReportPage() {
     setLoading(true);
 
     try {
-
+      const formDataToSend = new FormData();
 
       // Add form fields
       Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value);
+        formDataToSend.append(key, value as string);
       });
 
       // Add images
