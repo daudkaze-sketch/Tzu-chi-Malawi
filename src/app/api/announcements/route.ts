@@ -4,6 +4,8 @@ import { saveMultipleFilesWithDateStructure } from '@/lib/fileUtils';
 
 const prisma = new PrismaClient();
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const announcements = await prisma.announcement.findMany({
