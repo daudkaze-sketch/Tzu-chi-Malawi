@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { BarChart3, Users, FileText, CheckCircle, AlertCircle, Plus } from 'lucide-react';
+import { BarChart3, Users, FileText, CheckCircle, AlertCircle, type LucideIcon } from 'lucide-react';
 
 import VillagesManagement from '@/components/VillagesManagement';
 
@@ -11,6 +11,19 @@ interface Stats {
   attendanceToday: number;
   tasksInProgress: number;
   lowStockItems: number;
+}
+
+interface ReportSummary {
+  date?: string;
+}
+
+interface TaskSummary {
+  status?: string;
+}
+
+interface MaterialSummary {
+  quantityRemaining?: number;
+  remainingStock?: number;
 }
 
 export default function DashboardPage() {
@@ -47,10 +60,13 @@ export default function DashboardPage() {
       const today = new Date().toISOString().split('T')[0];
 
       setStats({
-        reportsToday: reports.reports?.filter((r: any) => r.date?.startsWith(today)).length || 0,
+        reportsToday: reports.reports?.filter((report: ReportSummary) => report.date?.startsWith(today)).length || 0,
         attendanceToday: attendance.attendances?.length || 0,
-        tasksInProgress: tasks.tasks?.filter((t: any) => t.status === 'in-progress').length || 0,
-        lowStockItems: materials.materials?.filter((m: any) => m.remainingStock && m.remainingStock < 5).length || 0,
+        tasksInProgress: tasks.tasks?.filter((task: TaskSummary) => task.status === 'in-progress').length || 0,
+        lowStockItems: materials.materials?.filter((material: MaterialSummary) => {
+          const remaining = material.quantityRemaining ?? material.remainingStock ?? 0;
+          return remaining < 5;
+        }).length || 0,
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -60,66 +76,74 @@ export default function DashboardPage() {
   };
 
   const quickActions = [
-    { name: 'Add Report', href: '/reports/new', color: 'bg-blue-500 hover:bg-blue-600', icon: FileText },
-    { name: 'Mark Attendance', href: '/attendance/new', color: 'bg-green-500 hover:bg-green-600', icon: Users },
-    { name: 'Add Task', href: '/tasks/new', color: 'bg-purple-500 hover:bg-purple-600', icon: CheckCircle },
-    { name: 'Update Inventory', href: '/materials/new', color: 'bg-orange-500 hover:bg-orange-600', icon: AlertCircle },
+    { name: 'Add Report', href: '/reports/new', color: 'border-blue-100 text-blue-700 hover:bg-blue-50', icon: FileText },
+    { name: 'Mark Attendance', href: '/attendance/new', color: 'border-green-100 text-green-700 hover:bg-green-50', icon: Users },
+    { name: 'Add Task', href: '/tasks/new', color: 'border-violet-100 text-violet-700 hover:bg-violet-50', icon: CheckCircle },
+    { name: 'Update Inventory', href: '/materials/new', color: 'border-orange-100 text-orange-700 hover:bg-orange-50', icon: AlertCircle },
   ];
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return <div className="flex min-h-screen items-center justify-center text-sm font-medium text-gray-500">Loading dashboard...</div>;
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-8 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+        <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
+          Executive Overview
+        </p>
+        <h1 className="mt-2 text-4xl font-bold tracking-tight text-gray-950">
           Welcome to Tzu Chi Malawi
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="mt-2 text-sm text-gray-600">
           {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Reports Today"
           value={stats.reportsToday}
           icon={FileText}
-          color="bg-blue-100 text-blue-600"
+          color="text-blue-700 bg-blue-50 border-blue-100"
         />
         <StatCard
           title="Attendance"
           value={stats.attendanceToday}
           icon={Users}
-          color="bg-green-100 text-green-600"
+          color="text-green-700 bg-green-50 border-green-100"
         />
         <StatCard
           title="Tasks In Progress"
           value={stats.tasksInProgress}
           icon={CheckCircle}
-          color="bg-purple-100 text-purple-600"
+          color="text-violet-700 bg-violet-50 border-violet-100"
         />
         <StatCard
           title="Low Stock Items"
           value={stats.lowStockItems}
           icon={AlertCircle}
-          color="bg-orange-100 text-orange-600"
+          color="text-orange-700 bg-orange-50 border-orange-100"
         />
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="mb-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="mb-5 flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-gray-950">Quick Actions</h2>
+            <p className="mt-1 text-sm text-gray-500">Start common office workflows in one click.</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {quickActions.map((action) => {
             const Icon = action.icon;
             return (
               <Link
                 key={action.name}
                 href={action.href}
-                className={`${action.color} text-white font-bold py-4 px-6 rounded-lg flex items-center justify-center space-x-2 transition duration-200`}
+                className={`${action.color} flex items-center justify-center gap-2 rounded-lg border bg-white px-5 py-4 text-sm font-bold shadow-sm transition`}
               >
                 <Icon size={20} />
                 <span>{action.name}</span>
@@ -135,7 +159,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Department Sections */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
         <DepartmentCard
           title="Education"
           href="/departments/education"
@@ -169,17 +193,19 @@ function StatCard({
 }: {
   title: string;
   value: number;
-  icon: any;
+  icon: LucideIcon;
   color: string;
 }) {
   return (
-    <div className={`${color} rounded-lg shadow-md p-6`}>
+    <div className={`rounded-xl border bg-white p-5 shadow-sm ${color}`}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium opacity-75">{title}</p>
-          <p className="text-3xl font-bold mt-2">{value}</p>
+          <p className="text-sm font-semibold opacity-80">{title}</p>
+          <p className="mt-2 text-3xl font-bold">{value}</p>
         </div>
-        <Icon size={32} className="opacity-50" />
+        <div className="rounded-lg bg-white/70 p-3 shadow-sm">
+          <Icon size={26} className="opacity-80" />
+        </div>
       </div>
     </div>
   );
@@ -192,20 +218,20 @@ function DepartmentCard({
 }: {
   title: string;
   href: string;
-  icon: any;
+  icon: LucideIcon;
 }) {
   return (
     <Link
       href={href}
-      className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200"
+      className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md"
     >
       <div className="flex items-center space-x-4">
-        <div className="bg-blue-100 text-blue-600 p-3 rounded-lg">
+        <div className="rounded-lg bg-blue-50 p-3 text-blue-700 ring-1 ring-blue-100">
           <Icon size={24} />
         </div>
         <div>
-          <h3 className="font-bold text-gray-800">{title} Department</h3>
-          <p className="text-sm text-gray-600 mt-1">Manage & track activities</p>
+          <h3 className="font-bold text-gray-900">{title} Department</h3>
+          <p className="mt-1 text-sm text-gray-500">Manage and track activities</p>
         </div>
       </div>
     </Link>

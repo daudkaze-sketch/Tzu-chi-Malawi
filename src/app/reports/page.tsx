@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FileText, Plus, Edit2, Trash2 } from 'lucide-react';
+import { Edit2, FileText, Plus, Trash2 } from 'lucide-react';
+import { ExportOptions, type ExportColumn } from '@/components/ExportOptions';
 
 interface DailyReport {
   id: string;
@@ -16,6 +17,21 @@ interface DailyReport {
   challenges?: string;
   solutions?: string;
   images?: string;
+}
+
+const reportColumns: ExportColumn<DailyReport>[] = [
+  { header: 'Date', accessor: (report) => formatDate(report.date) },
+  { header: 'Department', accessor: 'department' },
+  { header: 'Work Done', accessor: 'workDone' },
+  { header: 'Involved', accessor: 'involved' },
+  { header: 'Location', accessor: 'location' },
+  { header: 'Status', accessor: 'status' },
+  { header: 'Challenges', accessor: (report) => report.challenges || '-' },
+  { header: 'Solutions', accessor: (report) => report.solutions || '-' },
+];
+
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString();
 }
 
 export default function ReportsListPage() {
@@ -43,116 +59,129 @@ export default function ReportsListPage() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      'not-started': 'bg-gray-100 text-gray-800',
-      'in-progress': 'bg-blue-100 text-blue-800',
-      'completed': 'bg-green-100 text-green-800',
+      'not-started': 'bg-gray-100 text-gray-700 ring-gray-200',
+      'in-progress': 'bg-blue-50 text-blue-700 ring-blue-200',
+      completed: 'bg-green-50 text-green-700 ring-green-200',
     };
     return colors[status] || colors['in-progress'];
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center text-sm font-medium text-gray-500">
+        Loading reports...
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Daily Reports</h1>
-        <Link
-          href="/reports/new"
-          className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
-        >
-          <Plus size={20} />
-          <span>Add Report</span>
-        </Link>
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
+            Operations
+          </p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-950">
+            Daily Reports
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm text-gray-600">
+            Review submitted field activity, department coverage, and daily execution notes.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          {reports.length > 0 && (
+            <ExportOptions
+              columns={reportColumns}
+              data={reports}
+              fileName="daily-reports"
+              title="Daily Reports"
+            />
+          )}
+          <Link
+            href="/reports/new"
+            className="inline-flex h-10 items-center gap-2 rounded-lg bg-blue-700 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800"
+          >
+            <Plus size={18} />
+            <span>Add Report</span>
+          </Link>
+        </div>
       </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
           {error}
         </div>
       )}
 
       {reports.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
-          <FileText size={48} className="mx-auto text-gray-400 mb-4" />
-          <p className="text-gray-600 mb-4">No reports yet</p>
+        <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
+          <FileText size={44} className="mx-auto mb-4 text-gray-400" />
+          <p className="text-base font-semibold text-gray-800">No reports yet</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Create the first daily report to begin tracking field activity.
+          </p>
           <Link
             href="/reports/new"
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg"
+            className="mt-6 inline-flex h-10 items-center rounded-lg bg-blue-700 px-5 text-sm font-semibold text-white transition hover:bg-blue-800"
           >
             Create First Report
           </Link>
         </div>
       ) : (
-        <div className="grid gap-4">
-          {reports.map((report) => (
-            <div
-              key={report.id}
-              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800">
-                    {report.department} - {new Date(report.date).toLocaleDateString()}
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-1">{report.workDone}</p>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(report.status)}`}>
-                  {report.status}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-4">
-                <div>
-                  <span className="font-semibold text-gray-800">Involved:</span> {report.involved}
-                </div>
-                <div>
-                  <span className="font-semibold text-gray-800">Location:</span> {report.location}
-                </div>
-              </div>
-
-              {report.challenges && (
-                <div className="text-sm mb-2">
-                  <span className="font-semibold text-gray-800">Challenges:</span> {report.challenges}
-                </div>
-              )}
-
-              {report.images && (
-                <div className="mb-4">
-                  <span className="font-semibold text-gray-800 text-sm">Images:</span>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
-                    {JSON.parse(report.images).map((image: { url: string; caption?: string }, index: number) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={image.url}
-                          alt={image.caption || `Report image ${index + 1}`}
-                          className="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-80 transition"
-                          onClick={() => window.open(image.url, '_blank')}
-                        />
-                        {image.caption && (
-                          <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b-lg">
-                            {image.caption}
-                          </div>
-                        )}
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[960px]">
+              <thead className="border-b border-gray-200 bg-gray-50">
+                <tr>
+                  <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Date</th>
+                  <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Department</th>
+                  <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Work Summary</th>
+                  <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Involved</th>
+                  <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Location</th>
+                  <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Status</th>
+                  <th className="px-5 py-3 text-right text-xs font-bold uppercase tracking-wide text-gray-500">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {reports.map((report) => (
+                  <tr key={report.id} className="transition hover:bg-blue-50/40">
+                    <td className="whitespace-nowrap px-5 py-4 text-sm font-medium text-gray-900">
+                      {formatDate(report.date)}
+                    </td>
+                    <td className="px-5 py-4 text-sm text-gray-700">{report.department}</td>
+                    <td className="max-w-md px-5 py-4 text-sm text-gray-600">
+                      <span className="line-clamp-2">{report.workDone}</span>
+                    </td>
+                    <td className="px-5 py-4 text-sm text-gray-600">{report.involved}</td>
+                    <td className="px-5 py-4 text-sm text-gray-600">{report.location}</td>
+                    <td className="px-5 py-4">
+                      <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${getStatusColor(report.status)}`}>
+                        {report.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-blue-100 text-blue-700 transition hover:bg-blue-50"
+                          title="Edit report"
+                        >
+                          <Edit2 size={15} />
+                        </button>
+                        <button
+                          type="button"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-100 text-red-700 transition hover:bg-red-50"
+                          title="Delete report"
+                        >
+                          <Trash2 size={15} />
+                        </button>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex space-x-2 mt-4">
-                <button className="flex items-center space-x-1 bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded transition">
-                  <Edit2 size={16} />
-                  <span>Edit</span>
-                </button>
-                <button className="flex items-center space-x-1 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded transition">
-                  <Trash2 size={16} />
-                  <span>Delete</span>
-                </button>
-              </div>
-            </div>
-          ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

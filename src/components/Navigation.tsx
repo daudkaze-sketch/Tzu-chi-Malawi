@@ -19,11 +19,14 @@ export function Navigation() {
   ];
 
   return (
-    <nav className="bg-blue-900 text-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4">
+    <nav className="sticky top-0 z-40 border-b border-blue-800/70 bg-blue-950 text-white shadow-[0_10px_30px_rgba(15,23,42,0.16)]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link href="/dashboard" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold">Tzu Chi Malawi</span>
+          <Link href="/dashboard" className="flex items-center space-x-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-sm font-black ring-1 ring-white/15">
+              TC
+            </span>
+            <span className="text-xl font-bold tracking-tight">Tzu Chi Malawi</span>
           </Link>
 
           {/* Desktop Menu */}
@@ -34,26 +37,31 @@ export function Navigation() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-1 ${
+                  className={`relative flex items-center space-x-1 rounded-lg px-3 py-2 text-sm font-semibold transition ${
                     pathname === item.href
-                      ? 'bg-blue-700'
-                      : 'hover:bg-blue-800'
+                      ? 'bg-white/[0.12] text-white shadow-inner'
+                      : 'text-blue-100 hover:bg-white/[0.08] hover:text-white'
                   }`}
                 >
                   <Icon size={18} />
                   <span>{item.name}</span>
+                  {pathname === item.href && (
+                    <span className="absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-blue-200" />
+                  )}
                 </Link>
               );
             })}
           </div>
 
           <div className="flex items-center space-x-4">
-            <span className="text-sm hidden sm:block">Tzu Chi Malawi</span>
+            <span className="hidden rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 text-xs font-semibold text-blue-50 sm:block">
+              Operations Console
+            </span>
           </div>
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden"
+            className="md:hidden rounded-lg p-2 hover:bg-white/10"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -62,17 +70,17 @@ export function Navigation() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden pb-4">
+          <div className="md:hidden space-y-1 pb-4">
             {navItems.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium flex items-center space-x-2 ${
+                  className={`flex items-center space-x-2 rounded-lg px-3 py-2 text-base font-medium ${
                     pathname === item.href
-                      ? 'bg-blue-700'
-                      : 'hover:bg-blue-800'
+                      ? 'bg-white/[0.12]'
+                      : 'text-blue-100 hover:bg-white/[0.08]'
                   }`}
                   onClick={() => setIsOpen(false)}
                 >

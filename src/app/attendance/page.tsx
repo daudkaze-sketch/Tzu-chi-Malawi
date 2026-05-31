@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Users, Plus, Clock, Trash2 } from 'lucide-react';
+import { ExportOptions, type ExportColumn } from '@/components/ExportOptions';
 
 interface Attendance {
   id: string;
@@ -13,6 +14,19 @@ interface Attendance {
   checkOutTime?: string;
   status: string;
   remarks?: string;
+}
+
+const attendanceColumns: ExportColumn<Attendance>[] = [
+  { header: 'Name', accessor: 'name' },
+  { header: 'Department', accessor: 'department' },
+  { header: 'Check-In', accessor: (record) => formatTime(record.checkInTime) },
+  { header: 'Check-Out', accessor: (record) => record.checkOutTime ? formatTime(record.checkOutTime) : '-' },
+  { header: 'Status', accessor: 'status' },
+  { header: 'Remarks', accessor: (record) => record.remarks || '-' },
+];
+
+function formatTime(value: string) {
+  return new Date(value).toLocaleTimeString();
 }
 
 export default function AttendancePage() {
@@ -71,80 +85,102 @@ export default function AttendancePage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return <div className="flex min-h-screen items-center justify-center text-sm font-medium text-gray-500">Loading attendance...</div>;
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Attendance</h1>
-        <Link
-          href="/attendance/new"
-          className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
-        >
-          <Plus size={20} />
-          <span>Mark Attendance</span>
-        </Link>
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
+            People
+          </p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-950">Attendance</h1>
+          <p className="mt-2 max-w-2xl text-sm text-gray-600">
+            Monitor staff presence, check-in activity, and attendance exceptions.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          {attendances.length > 0 && (
+            <ExportOptions
+              columns={attendanceColumns}
+              data={attendances}
+              fileName="attendance-records"
+              title="Attendance Records"
+            />
+          )}
+          <Link
+            href="/attendance/new"
+            className="inline-flex h-10 items-center gap-2 rounded-lg bg-blue-700 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800"
+          >
+            <Plus size={18} />
+            <span>Mark Attendance</span>
+          </Link>
+        </div>
       </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
           {error}
         </div>
       )}
 
       {attendances.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
-          <Users size={48} className="mx-auto text-gray-400 mb-4" />
-          <p className="text-gray-600 mb-4">No attendance records yet</p>
+        <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
+          <Users size={44} className="mx-auto mb-4 text-gray-400" />
+          <p className="text-base font-semibold text-gray-800">No attendance records yet</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Start by recording today&apos;s attendance.
+          </p>
           <Link
             href="/attendance/new"
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg"
+            className="mt-6 inline-flex h-10 items-center rounded-lg bg-blue-700 px-5 text-sm font-semibold text-white transition hover:bg-blue-800"
           >
             Record Attendance
           </Link>
         </div>
       ) : (
-        <div className="overflow-x-auto bg-white rounded-lg shadow-md">
-          <table className="w-full">
-            <thead className="bg-gray-100 border-b border-gray-300">
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[920px]">
+            <thead className="border-b border-gray-200 bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Department</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Check-In</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Check-Out</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Remarks</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Name</th>
+                <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Department</th>
+                <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Check-In</th>
+                <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Check-Out</th>
+                <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Status</th>
+                <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">Remarks</th>
+                <th className="px-5 py-3 text-right text-xs font-bold uppercase tracking-wide text-gray-500">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-100">
               {attendances.map((record) => (
-                <tr key={record.id} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-6 py-4 text-gray-800">{record.name}</td>
-                  <td className="px-6 py-4 text-gray-600">{record.department}</td>
-                  <td className="px-6 py-4 text-gray-600">
-                    <div className="flex items-center space-x-1">
+                <tr key={record.id} className="transition hover:bg-blue-50/40">
+                  <td className="px-5 py-4 text-sm font-medium text-gray-900">{record.name}</td>
+                  <td className="px-5 py-4 text-sm text-gray-600">{record.department}</td>
+                  <td className="px-5 py-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-1.5">
                       <Clock size={16} />
-                      <span>{new Date(record.checkInTime).toLocaleTimeString()}</span>
+                      <span>{formatTime(record.checkInTime)}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-gray-600">
+                  <td className="px-5 py-4 text-sm text-gray-600">
                     {record.checkOutTime
-                      ? new Date(record.checkOutTime).toLocaleTimeString()
+                      ? formatTime(record.checkOutTime)
                       : '-'}
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(record.status)}`}>
+                  <td className="px-5 py-4">
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusColor(record.status)}`}>
                       {record.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-600 text-sm">{record.remarks || '-'}</td>
-                  <td className="px-6 py-4 text-gray-600 text-sm">
+                  <td className="px-5 py-4 text-sm text-gray-600">{record.remarks || '-'}</td>
+                  <td className="px-5 py-4 text-right text-sm text-gray-600">
                     <button
                       type="button"
                       onClick={() => handleDeleteAttendance(record.id)}
-                      className="text-red-600 hover:text-red-800"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-100 text-red-700 transition hover:bg-red-50"
                       title="Delete attendance"
                     >
                       <Trash2 size={18} />
@@ -154,6 +190,7 @@ export default function AttendancePage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>
