@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const title = formData.get('title') as string;
-    const type = formData.get('type') as string;
+    const type = (formData.get('type') as string) || 'photo';
     const department = formData.get('department') as string;
     const eventName = formData.get('eventName') as string;
     const location = formData.get('location') as string;

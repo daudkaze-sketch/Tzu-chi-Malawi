@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {    const formData = await request.formData();
     const title = formData.get('title') as string;
-    const type = formData.get('type') as string;
+    const type = (formData.get('type') as string) || 'document';
     const department = formData.get('department') as string;
     const date = formData.get('date') as string;
     const description = formData.get('description') as string;

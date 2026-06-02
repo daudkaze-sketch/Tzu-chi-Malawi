@@ -2,12 +2,17 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Menu, X, Home, FileText, Users, Calendar, Box, Megaphone } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Menu, X, Home, FileText, Users, Calendar, Box, Megaphone, LogOut } from 'lucide-react';
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  if (pathname === '/login') {
+    return null;
+  }
 
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -17,6 +22,12 @@ export function Navigation() {
     { name: 'Inventory', href: '/materials', icon: Box },
     { name: 'Announcements', href: '/announcements', icon: Megaphone },
   ];
+
+  const logout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+    router.refresh();
+  };
 
   return (
     <nav className="sticky top-0 z-40 border-b border-blue-800/70 bg-blue-950 text-white shadow-[0_10px_30px_rgba(15,23,42,0.16)]">
@@ -57,6 +68,15 @@ export function Navigation() {
             <span className="hidden rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 text-xs font-semibold text-blue-50 sm:block">
               Operations Console
             </span>
+            <button
+              type="button"
+              onClick={logout}
+              className="hidden items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 transition hover:bg-white/[0.08] hover:text-white md:flex"
+              title="Log out"
+            >
+              <LogOut size={18} />
+              <span>Logout</span>
+            </button>
           </div>
 
           {/* Mobile menu button */}
@@ -89,6 +109,14 @@ export function Navigation() {
                 </Link>
               );
             })}
+            <button
+              type="button"
+              onClick={logout}
+              className="flex w-full items-center space-x-2 rounded-lg px-3 py-2 text-base font-medium text-blue-100 hover:bg-white/[0.08]"
+            >
+              <LogOut size={18} />
+              <span>Logout</span>
+            </button>
           </div>
         )}
       </div>

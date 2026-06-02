@@ -40,6 +40,46 @@ model User {
   charityActivities  CharityActivity[]
   mediaUploads      Media[]
   announcements     Announcement[]
+  authSessions      AuthSession[]
+}
+
+model AccessRequest {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String?
+  status       String    @default("PENDING") // PENDING, APPROVED, DENIED
+  adminToken   String    @unique
+  requestedAt  DateTime  @default(now())
+  reviewedAt   DateTime?
+  codeSentAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([status, requestedAt])
+}
+
+model LoginCode {
+  id        String    @id @default(cuid())
+  email     String
+  codeHash  String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([email, expiresAt])
+}
+
+model AuthSession {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  email     String
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  @@index([email])
+  @@index([expiresAt])
 }
 
 model DailyReport {
