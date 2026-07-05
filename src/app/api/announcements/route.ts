@@ -28,6 +28,15 @@ export async function POST(request: NextRequest) {
     const messageContent = formData.get('messageContent') as string;
     const date = formData.get('date') as string;
     const priorityLevel = formData.get('priorityLevel') as string;
+    const eventType = formData.get('eventType') as string;
+    const newsCategory = formData.get('newsCategory') as string;
+
+    const detailLines = [
+      newsCategory ? `Related area: ${newsCategory}` : '',
+      eventType ? `Event type: ${eventType}` : '',
+    ].filter(Boolean);
+
+    const fullMessageContent = [messageContent, detailLines.join('\n')].filter(Boolean).join('\n\n');
 
     // Handle file uploads
     const attachments = formData.getAll('attachments') as File[];
@@ -67,7 +76,7 @@ export async function POST(request: NextRequest) {
       data: {
         title,
         type,
-        messageContent,
+        messageContent: fullMessageContent,
         date: new Date(date),
         priorityLevel,
         attachments: attachmentData.length > 0 ? JSON.stringify(attachmentData) : null,

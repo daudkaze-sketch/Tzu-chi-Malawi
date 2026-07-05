@@ -1,23 +1,22 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Megaphone, Plus } from 'lucide-react';
 
 interface Announcement {
   id: string;
   title: string;
-  description: string;
+  type?: string;
+  messageContent?: string;
   date: string;
-  category: string;
-  user: { name: string; email: string };
+  priorityLevel?: string;
+  user?: { name?: string; email?: string };
 }
 
 export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     fetchAnnouncements();
@@ -64,16 +63,22 @@ export default function AnnouncementsPage() {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-bold text-gray-800">{announcement.title}</h3>
-                  <div className="flex items-center space-x-4 text-sm text-gray-600 mt-2">
-                    <span>{announcement.user.name}</span>
+                  <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mt-2">
+                    <span>{announcement.user?.name || 'Staff'}</span>
                     <span>•</span>
                     <span>{new Date(announcement.date).toLocaleDateString()}</span>
                     <span>•</span>
-                    <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded">{announcement.category}</span>
+                    <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded">{announcement.type || 'Announcement'}</span>
+                    {announcement.priorityLevel && (
+                      <>
+                        <span>•</span>
+                        <span className="bg-amber-100 text-amber-700 px-2 py-1 rounded">{announcement.priorityLevel}</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
-              <p className="text-gray-700 whitespace-pre-wrap">{announcement.description}</p>
+              <p className="text-gray-700 whitespace-pre-wrap">{announcement.messageContent || 'No details provided yet.'}</p>
             </div>
           ))}
         </div>
