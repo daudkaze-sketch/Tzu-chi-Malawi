@@ -36,22 +36,28 @@ export function LoginAccessForm() {
     setStatus('loading');
     setMessage('');
 
-    const response = await fetch('/api/auth/request-access', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email, name }),
-    });
-    const data = await response.json();
+    try {
+      const response = await fetch('/api/auth/request-access', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email, name }),
+      });
+      const data = await response.json().catch(() => ({}));
 
-    if (!response.ok) {
+      if (!response.ok) {
+        setStatus('error');
+        setMessage(data.message ?? 'Could not send request.');
+        return;
+      }
+
+      setStatus('success');
+      setMessage(data.message ?? 'Request sent. Wait for administrator approval.');
+      setView('code');
+    } catch (error) {
+      console.error('Request access failed:', error);
       setStatus('error');
-      setMessage(data.message ?? 'Could not send request.');
-      return;
+      setMessage('Unable to reach the server right now. Please try again.');
     }
-
-    setStatus('success');
-    setMessage(data.message ?? 'Request sent. Wait for administrator approval.');
-    setView('code');
   };
 
   const verifyCode = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -59,20 +65,26 @@ export function LoginAccessForm() {
     setStatus('loading');
     setMessage('');
 
-    const response = await fetch('/api/auth/verify-code', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email, code }),
-    });
-    const data = await response.json();
+    try {
+      const response = await fetch('/api/auth/verify-code', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email, code }),
+      });
+      const data = await response.json().catch(() => ({}));
 
-    if (!response.ok) {
+      if (!response.ok) {
+        setStatus('error');
+        setMessage(data.message ?? 'Could not verify code.');
+        return;
+      }
+
+      loginSuccess();
+    } catch (error) {
+      console.error('Verify code failed:', error);
       setStatus('error');
-      setMessage(data.message ?? 'Could not verify code.');
-      return;
+      setMessage('Unable to reach the server right now. Please try again.');
     }
-
-    loginSuccess();
   };
 
   const enterApproved = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -80,20 +92,26 @@ export function LoginAccessForm() {
     setStatus('loading');
     setMessage('');
 
-    const response = await fetch('/api/auth/approved-login', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email, adminCode: view === 'admin' ? adminCode : undefined }),
-    });
-    const data = await response.json();
+    try {
+      const response = await fetch('/api/auth/approved-login', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email, adminCode: view === 'admin' ? adminCode : undefined }),
+      });
+      const data = await response.json().catch(() => ({}));
 
-    if (!response.ok) {
+      if (!response.ok) {
+        setStatus('error');
+        setMessage(data.message ?? 'Could not enter with this email.');
+        return;
+      }
+
+      loginSuccess();
+    } catch (error) {
+      console.error('Approved login failed:', error);
       setStatus('error');
-      setMessage(data.message ?? 'Could not enter with this email.');
-      return;
+      setMessage('Unable to reach the server right now. Please try again.');
     }
-
-    loginSuccess();
   };
 
   return (
