@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Megaphone, Plus } from 'lucide-react';
+import { useLocale } from '@/lib/i18n';
 
 interface Announcement {
   id: string;
@@ -15,6 +16,7 @@ interface Announcement {
 }
 
 export default function AnnouncementsPage() {
+  const { t } = useLocale();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,20 +43,21 @@ export default function AnnouncementsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Latest News & Updates</h1>
+        <h1 className="text-3xl font-bold text-gray-800">{t('announcements.title')}</h1>
         <Link
           href="/announcements/new"
           className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
         >
           <Plus size={20} />
           <span>Post News</span>
+          <span>{t('announcements.postNews')}</span>
         </Link>
       </div>
 
       {announcements.length === 0 ? (
         <div className="bg-white rounded-lg shadow-md p-8 text-center">
           <Megaphone size={48} className="mx-auto text-gray-400 mb-4" />
-          <p className="text-gray-600">No announcements yet</p>
+          <p className="text-gray-600">{t('announcements.noAnnouncements')}</p>
         </div>
       ) : (
         <div className="grid gap-6">

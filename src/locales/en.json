@@ -1,0 +1,19 @@
+{
+  "announcements": {
+    "title": "Latest News & Updates",
+    "postNews": "Post News",
+    "noAnnouncements": "No announcements yet",
+    "backToAnnouncements": "Back to announcements",
+    "postAnew": "Post a new update"
+  },
+  "charity": {
+    "activityReport": "Activity report",
+    "addReport": "Add report",
+    "step": "Step"
+  },
+  "nav": {
+    "logout": "Logout",
+    "operations": "Operations Console",
+    "language": "Language"
+  }
+}

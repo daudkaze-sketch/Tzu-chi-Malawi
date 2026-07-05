@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle2, ChevronRight, FileText, Plus, Sparkles } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronRight, FileText } from 'lucide-react';
+import { useLocale } from '@/lib/i18n';
 
 const steps = [
   { id: 1, title: 'Activity basics', description: 'Choose the activity type and date.' },
@@ -11,6 +12,7 @@ const steps = [
 ];
 
 export default function CharityReportsPage() {
+  const { t } = useLocale();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     activityType: '',
@@ -79,14 +81,14 @@ export default function CharityReportsPage() {
     <div className="mx-auto max-w-5xl px-4 py-8">
       <Link href="/departments/charity" className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700">
         <ArrowLeft size={18} />
-        Back to Charity Department
+        {t('charity.addReport')}
       </Link>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-600">Charity</p>
-            <h1 className="mt-2 text-3xl font-bold text-slate-900">Activity report</h1>
+            <h1 className="mt-2 text-3xl font-bold text-slate-900">{t('charity.activityReport')}</h1>
             <p className="mt-2 text-sm text-slate-600">Add your charity activity step by step so the report stays clear and complete.</p>
           </div>
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
@@ -96,7 +98,7 @@ export default function CharityReportsPage() {
 
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between text-sm text-slate-500">
-            <span>Step {step} of {steps.length}</span>
+            <span>{t('charity.step')} {step} of {steps.length}</span>
             <span>{Math.round(progressPercent)}%</span>
           </div>
           <div className="h-2 rounded-full bg-slate-100">
@@ -174,7 +176,7 @@ export default function CharityReportsPage() {
               ) : (
                 <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70">
                   <CheckCircle2 size={16} />
-                  {saving ? 'Saving...' : 'Save report'}
+                  {saving ? 'Saving...' : t('charity.addReport')}
                 </button>
               )}
             </div>

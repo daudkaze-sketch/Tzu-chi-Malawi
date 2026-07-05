@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Plus, Send } from 'lucide-react';
+import { useLocale } from '@/lib/i18n';
 
 export default function NewAnnouncementPage() {
   const router = useRouter();
@@ -58,18 +59,20 @@ export default function NewAnnouncementPage() {
     }
   };
 
+  const { t } = useLocale();
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
       <Link href="/announcements" className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700">
         <ArrowLeft size={18} />
-        Back to announcements
+        {t('announcements.backToAnnouncements')}
       </Link>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">News</p>
-            <h1 className="mt-2 text-3xl font-bold text-slate-900">Post a new update</h1>
+            <h1 className="mt-2 text-3xl font-bold text-slate-900">{t('announcements.postAnew')}</h1>
             <p className="mt-2 text-sm text-slate-600">Add the main announcement details, related event type, and the category that fits your website content.</p>
           </div>
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
@@ -139,10 +142,10 @@ export default function NewAnnouncementPage() {
           </div>
 
           <div className="flex items-center justify-end gap-3">
-            <Link href="/announcements" className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</Link>
+            <Link href="/announcements" className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">{t('announcements.backToAnnouncements')}</Link>
             <button type="submit" disabled={submitting} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70">
               <Send size={16} />
-              {submitting ? 'Posting...' : 'Post news'}
+              {submitting ? 'Posting...' : t('announcements.postNews')}
             </button>
           </div>
         </form>

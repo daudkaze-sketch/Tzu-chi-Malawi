@@ -1,0 +1,19 @@
+{
+  "announcements": {
+    "title": "最新消息與更新",
+    "postNews": "發布消息",
+    "noAnnouncements": "目前尚無消息",
+    "backToAnnouncements": "回到消息頁面",
+    "postAnew": "發布新更新"
+  },
+  "charity": {
+    "activityReport": "活動報告",
+    "addReport": "新增報告",
+    "step": "步驟"
+  },
+  "nav": {
+    "logout": "登出",
+    "operations": "營運控制台",
+    "language": "語言"
+  }
+}

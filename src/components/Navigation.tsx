@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Home, FileText, Users, Calendar, Box, Megaphone, LogOut } from 'lucide-react';
+import { useLocale } from '@/lib/i18n';
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +23,8 @@ export function Navigation() {
     { name: 'Inventory', href: '/materials', icon: Box },
     { name: 'Announcements', href: '/announcements', icon: Megaphone },
   ];
+
+  const { locale, setLocale, t } = useLocale();
 
   const logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -66,16 +69,29 @@ export function Navigation() {
 
           <div className="flex items-center space-x-4">
             <span className="hidden rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 text-xs font-semibold text-blue-50 sm:block">
-              Operations Console
+              {t('nav.operations')}
             </span>
+
+            <div className="hidden items-center gap-3 md:flex">
+              <label className="text-sm text-blue-100">{t('nav.language')}:</label>
+              <select
+                value={locale}
+                onChange={(e) => setLocale(e.target.value as any)}
+                className="rounded-md bg-white/5 text-sm text-white px-2 py-1"
+              >
+                <option value="en">English</option>
+                <option value="zh-TW">繁體中文</option>
+              </select>
+            </div>
+
             <button
               type="button"
               onClick={logout}
               className="hidden items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 transition hover:bg-white/[0.08] hover:text-white md:flex"
-              title="Log out"
+              title={t('nav.logout')}
             >
               <LogOut size={18} />
-              <span>Logout</span>
+              <span>{t('nav.logout')}</span>
             </button>
           </div>
 
